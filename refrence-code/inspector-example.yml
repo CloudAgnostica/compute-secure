@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Initializes global resources and logging/monitoring capabilities
+
+Conditions:
+  IsGovCloud:
+    Fn::Equals:
+      - Ref: AWS::Region
+      - us-gov-west-1
+
+Resources:
+
+  inspectorAssessmentTarget:
+    Type: AWS::Inspector::AssessmentTarget
+    Properties:
+      AssessmentTargetName: "All-Instances"
+
+
+  inspectorAssessmentTemplate:
+    Type: AWS::Inspector::AssessmentTemplate
+    Properties:
+      AssessmentTargetArn: !GetAtt inspectorAssessmentTarget.Arn
+      AssessmentTemplateName: "Assessment-All-Regional-Rules"
+      DurationInSeconds: 7200
+
+      RulesPackageArns:
+        - arn:aws-us-gov:inspector:us-gov-west-1:850862329162:rulespackage/0-4oQgcI4G
+        - arn:aws-us-gov:inspector:us-gov-west-1:850862329162:rulespackage/0-Ac4CFOuc
+        - arn:aws-us-gov:inspector:us-gov-west-1:850862329162:rulespackage/0-rOTGqe5G
+#     https://docs.aws.amazon.com/inspector/latest/userguide/inspector_rules-arns.html#govcloud-west
